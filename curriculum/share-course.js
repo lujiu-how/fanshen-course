@@ -1,7 +1,5 @@
 import { createCoursePng } from './export-png.js?v=e0da0db84997';
 
-// The course is loaded once. Cache by its DOM root, including a pending render.
-const images = new WeakMap();
 const dialogs = new WeakMap();
 const liveUrls = new Set();
 let sharing = false;
@@ -53,30 +51,18 @@ function canShareImage(image) {
   }
 }
 
-function getImage(element) {
-  const cached = images.get(element);
-  if (cached) return cached;
-  const record = { value: null, pending: null };
-  images.set(element, record);
-  record.pending = (async () => {
-    const result = await createCoursePng(element);
-    if (!(result?.blob instanceof Blob) || result.blob.type !== 'image/png' || result.blob.size === 0) {
-      throw new Error('没有生成有效的 PNG 图片，请重试。');
-    }
-    const fileName = typeof result.fileName === 'string' && /\.png$/i.test(result.fileName)
-      ? result.fileName : '番申AI产品运营课程详情.png';
-    // Older embedded browsers can still show/save the Blob without File support.
-    let file = null;
-    if (typeof File === 'function') {
-      try { file = new File([result.blob], fileName, { type: 'image/png' }); } catch { /* Preview/save still works. */ }
-    }
-    record.value = { ...result, fileName, file };
-    return record.value;
-  })().catch(error => {
-    if (images.get(element) === record) images.delete(element);
-    throw error;
-  });
-  return record;
+async function getImage(element) {
+  const result = await createCoursePng(element);
+  if (!(result?.blob instanceof Blob) || result.blob.type !== 'image/png' || result.blob.size === 0) {
+    throw new Error('没有生成有效的 PNG 图片，请重试。');
+  }
+  const fileName = typeof result.fileName === 'string' && /\.png$/i.test(result.fileName)
+    ? result.fileName : '番申AI产品运营课程详情.png';
+  let file = null;
+  if (typeof File === 'function') {
+    try { file = new File([result.blob], fileName, { type: 'image/png' }); } catch { /* Preview/save still works. */ }
+  }
+  return { ...result, fileName, file };
 }
 
 function bindImage(state, image) {
@@ -213,7 +199,7 @@ async function downloadImage(state, fileHandle) {
  * Desktop downloads use a handle selected in the original click, or an anchor.
  * Requires the fixed dialog IDs supplied by index.html.
  * Returns { ok, mode } (shared / ready / fallback / cancelled / saved / downloaded), or { ok: false }.
- * Images are cached by the static course root; closing a dialog keeps its image.
+ * Each download generates a new image. The open dialog retains it for sharing.
  */
 export async function shareCoursePng({ element, button, statusElement, dialog, download = false, fileHandle = null } = {}) {
   let state;
@@ -227,10 +213,8 @@ export async function shareCoursePng({ element, button, statusElement, dialog, d
     state.generating = true;
     ownsGeneration = true;
     restore = loading(button, '正在生成图片…');
-    const record = getImage(element);
-    // Cached images must reach nativeShare without an await that loses activation.
-    if (!record.value) message(state, '正在生成课程图片，请稍候…');
-    const image = record.value || await record.pending;
+    message(state, '正在生成课程图片，请稍候…');
+    const image = await getImage(element);
     bindImage(state, image);
     if (download) return await downloadImage(state, fileHandle);
     state.generating = false;
