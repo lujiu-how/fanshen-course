@@ -1,4 +1,5 @@
-const EXPORT_WIDTH = 1200;
+const EXPORT_WIDTH = 390;
+const EXPORT_SCALE = 2;
 const MAX_PIXELS = 12_000_000;
 const MAX_DIMENSION = 16_000;
 const FILE_NAME = "番申产品运营课程详情.png";
@@ -100,6 +101,15 @@ function showResult(url, anchorElement, downloadSupported) {
     link.textContent = "打开完整 PNG，长按图片保存";
   }
   box.append(link);
+  const preview = document.createElement("details");
+  preview.className = "export-preview";
+  const previewLabel = document.createElement("summary");
+  previewLabel.textContent = "预览图片 / 长按保存";
+  const previewImage = document.createElement("img");
+  previewImage.src = url;
+  previewImage.alt = "番申产品运营完整课程大纲长图";
+  preview.append(previewLabel, previewImage);
+  box.append(preview);
   if (anchorElement.getAttribute("role") === "status") {
     anchorElement.append(box);
     const close = document.createElement("button");
@@ -122,9 +132,9 @@ function showResult(url, anchorElement, downloadSupported) {
 }
 
 /**
- * Export the entire visible course element, including its final section, as one PNG.
+ * Export the complete course outline at phone width, including its final section.
  * The page supplies .export-mode styles and vendor/html2canvas.min.js (v1.4.1).
- * UI controls inside the element must have data-export-ignore.
+ * Practice details and UI controls use data-export-ignore and are omitted.
  * Returns { ok, width, height, fileName } or { ok: false, error | busy }.
  */
 export async function exportCoursePng({ element, button, statusElement } = {}) {
@@ -185,7 +195,7 @@ export async function exportCoursePng({ element, button, statusElement } = {}) {
 
     const height = Math.ceil(Math.max(clone.scrollHeight, clone.offsetHeight, clone.getBoundingClientRect().height));
     if (!Number.isFinite(height) || height < 1) throw new Error("课程内容尺寸无效，请刷新页面后重试。");
-    const scale = Math.min(1, MAX_DIMENSION / height, Math.sqrt(MAX_PIXELS / (EXPORT_WIDTH * height)));
+    const scale = Math.min(EXPORT_SCALE, MAX_DIMENSION / height, Math.sqrt(MAX_PIXELS / (EXPORT_WIDTH * height)));
 
     canvas = await html2canvas(clone, {
       backgroundColor: null,
