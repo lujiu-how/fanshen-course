@@ -1,7 +1,24 @@
 import { course } from './course-data.js?v=0745a8c07163';
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-const formatText = value => escapeHtml(value).replace(/\n/g, '<br>');
+function formatText(value) {
+  const blocks = [];
+  let items = [];
+  const endList = () => {
+    if (items.length) blocks.push(`<ul>${items.join('')}</ul>`);
+    items = [];
+  };
+  for (const line of String(value).split(/\r?\n/)) {
+    const text = line.trim();
+    if (text.startsWith('• ')) items.push(`<li>${escapeHtml(text.slice(2))}</li>`);
+    else {
+      endList();
+      if (text) blocks.push(`<p>${escapeHtml(text)}</p>`);
+    }
+  }
+  endList();
+  return blocks.join('');
+}
 const total = course.groups.reduce((count, group) => count + group.units.length, 0);
 document.querySelector('#curriculum-count').textContent = `${course.groups.length} 个模块 / ${total} 节课程`;
 document.querySelector('#course-sections').innerHTML = course.groups.map((group, index) => `
@@ -11,7 +28,7 @@ document.querySelector('#course-sections').innerHTML = course.groups.map((group,
     <div class="units">${group.units.map((unit, lessonIndex) => `
       <article class="course-unit" data-source-number="${escapeHtml(unit.number)}">
         <div class="unit-heading"><span class="unit-number">${String(lessonIndex + 1).padStart(2, '0')}</span><h4>${escapeHtml(unit.title)}</h4></div>
-        <div class="unit-copy"><p class="unit-plan">${formatText(unit.plan)}</p>${unit.practice ? `<p class="unit-practice" data-export-ignore><span>实训</span>${formatText(unit.practice)}</p>` : ''}</div>
+        <div class="unit-copy"><div class="unit-plan">${formatText(unit.plan)}</div>${unit.practice ? `<div class="unit-practice" data-export-ignore><span>实训</span><div class="unit-practice-content">${formatText(unit.practice)}</div></div>` : ''}</div>
       </article>`).join('')}</div>
   </section>`).join('');
 
