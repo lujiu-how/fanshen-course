@@ -1,5 +1,4 @@
-import { course } from './course-data.js';
-import { exportCoursePng } from './export-png.js';
+import { course } from './course-data.js?v=721234b3ca6f';
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const total = course.groups.reduce((count, group) => count + group.units.length, 0);
@@ -15,8 +14,17 @@ document.querySelector('#course-sections').innerHTML = course.groups.map((group,
       </article>`).join('')}</div>
   </section>`).join('');
 
-document.querySelector('#export-button').addEventListener('click', () => exportCoursePng({
-  element: document.querySelector('#course-document'),
-  button: document.querySelector('#export-button'),
-  statusElement: document.querySelector('#export-status'),
-}));
+const shareButton = document.querySelector('#share-button');
+shareButton.addEventListener('click', async () => {
+  try {
+    const { shareCoursePng } = await import('./share-course.js?v=f72162a7c71f');
+    await shareCoursePng({
+      element: document.querySelector('#course-document'),
+      button: shareButton,
+      statusElement: document.querySelector('#share-status'),
+      dialog: document.querySelector('#share-dialog'),
+    });
+  } catch {
+    document.querySelector('#share-status').textContent = '分享组件暂未加载成功，请再试一次。';
+  }
+});
