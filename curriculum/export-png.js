@@ -88,6 +88,8 @@ export async function createCoursePng(element) {
     host.style.cssText = `position:absolute;left:-20000px;top:0;width:${EXPORT_WIDTH}px;pointer-events:none;`;
     const clone = element.cloneNode(true);
     clone.classList.add("export-mode");
+    // Keep the phone image source even when sharing from a wide viewport.
+    clone.querySelectorAll(".hero-visual picture source").forEach(node => node.remove());
     clone.querySelectorAll("[data-export-ignore]").forEach(node => node.remove());
     host.append(clone);
     document.body.append(host);

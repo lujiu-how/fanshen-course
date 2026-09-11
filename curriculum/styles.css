@@ -9,7 +9,7 @@
 @media(max-width:359px){.course-document:not(.export-mode) .syllabus{padding-inline:18px}.course-document:not(.export-mode) .hero-meta{gap:9px;margin-inline:18px;font-size:12px}.course-document:not(.export-mode) .stage-heading{gap:9px;padding-inline:11px}.course-document:not(.export-mode) .stage-heading h3{font-size:17px}.course-document:not(.export-mode) .syllabus-heading h2{font-size:28px}.course-document:not(.export-mode) .unit-heading{gap:8px}.course-document:not(.export-mode) .unit-heading h4{font-size:17px}.course-document:not(.export-mode) .unit-copy{padding-left:30px}.course-document:not(.export-mode) .document-footer{padding-inline:18px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-.hero-intro{position:relative;padding:17px 22px 7px;text-align:center;background:#08090a}.hero-intro:before{content:"";position:absolute;inset:-24px 0 auto;height:24px;background:linear-gradient(0deg,#08090a,transparent);pointer-events:none}.hero-intro h1{margin:0;color:#f0e5d4;font-size:22px;line-height:1.5;font-weight:600;letter-spacing:.015em}.hero-detail-label{margin:7px 0 0;font-size:12px;line-height:1.6;letter-spacing:.2em;color:#998d7a}.hero-slogan{margin:20px 0 10px;font-size:14px;line-height:1.9;color:#bbb4a8}.hero-slogan span{display:block}.hero-slogan strong{color:#e3c490;font-weight:600}.hero-intro+
+.hero-intro{position:relative;padding:17px 22px 7px;text-align:center;background:#08090a}.hero-intro:before{content:"";position:absolute;inset:-24px 0 auto;height:24px;background:linear-gradient(0deg,#08090a,transparent);pointer-events:none}.hero-intro h1{margin:0;color:#f0e5d4;font-size:22px;line-height:1.5;font-weight:600;letter-spacing:.015em}.hero-detail-label{margin:7px 0 0;font-size:12px;line-height:1.6;letter-spacing:.2em;color:#998d7a}.hero-slogan{margin:20px 0 10px;font-size:14px;line-height:1.9;color:#bbb4a8}.hero-slogan span{display:block}.hero-slogan strong{color:#e3c490;font-weight:600}
 
 /* PNG stays at phone width even when it is generated from a wide screen. */
 .course-document.export-mode{width:390px;min-width:390px;max-width:none;margin:0;border-radius:0;box-shadow:none;overflow:visible}
@@ -26,14 +26,15 @@
 
 @media(min-width:760px){
   .course-document:not(.export-mode){width:calc(100% - 48px);max-width:1180px;margin-top:24px}
-  .course-document:not(.export-mode) .hero{display:grid;grid-template-columns:1.25fr 1fr;grid-template-areas:"art intro" "art meta";column-gap:32px;padding:28px 36px 36px;border-bottom:1px solid #30281c}
-  .course-document:not(.export-mode) .hero-visual{grid-area:art;align-self:center}
-  .course-document:not(.export-mode) .hero-intro{grid-area:intro;align-self:end;padding:0;text-align:left}
-  .course-document:not(.export-mode) .hero-intro:before{display:none}
-  .course-document:not(.export-mode) .hero-intro h1{font-size:clamp(26px,2.7vw,38px);line-height:1.45;letter-spacing:.01em}
-  .course-document:not(.export-mode) .hero-detail-label{font-size:14px;margin-top:12px}
-  .course-document:not(.export-mode) .hero-slogan{font-size:16px;margin-top:26px;margin-bottom:0}
-  .course-document:not(.export-mode) .hero-meta{grid-area:meta;align-self:start;justify-content:flex-start;flex-wrap:wrap;margin:22px 0 0;padding:0;gap:11px;border:0}
+  .course-document:not(.export-mode) .hero-brand{display:flex;align-items:center;justify-content:space-between;gap:24px;left:48px;right:48px;text-align:left}
+  .course-document:not(.export-mode) .hero-brand>div{justify-content:flex-start;gap:12px;font-size:26px;white-space:nowrap}
+  .course-document:not(.export-mode) .hero-brand img{width:28px;height:34px}
+  .course-document:not(.export-mode) .hero-brand p{margin:0;font-size:14px;text-align:right}
+  .course-document:not(.export-mode) .hero-intro{padding:26px 48px 9px}
+  .course-document:not(.export-mode) .hero-intro h1{font-size:clamp(28px,2.7vw,36px);line-height:1.45;letter-spacing:.01em}
+  .course-document:not(.export-mode) .hero-detail-label{font-size:14px;margin-top:10px}
+  .course-document:not(.export-mode) .hero-slogan{font-size:16px;margin-top:22px;margin-bottom:4px}
+  .course-document:not(.export-mode) .hero-meta{margin:0 48px;padding:18px 0 34px;gap:16px;font-size:14px}
   .course-document:not(.export-mode) .syllabus{padding:42px 48px 10px}
   .course-document:not(.export-mode) .syllabus-heading{padding-bottom:26px;margin-bottom:32px}
   .course-document:not(.export-mode) .syllabus-heading h2{font-size:34px}

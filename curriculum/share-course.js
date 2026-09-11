@@ -1,4 +1,4 @@
-import { createCoursePng } from './export-png.js?v=eca50c2a1043';
+import { createCoursePng } from './export-png.js?v=e0da0db84997';
 
 // The course is loaded once. Cache by its DOM root, including a pending render.
 const images = new WeakMap();

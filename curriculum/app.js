@@ -17,7 +17,7 @@ document.querySelector('#course-sections').innerHTML = course.groups.map((group,
 const shareButton = document.querySelector('#share-button');
 shareButton.addEventListener('click', async () => {
   try {
-    const { shareCoursePng } = await import('./share-course.js?v=f72162a7c71f');
+    const { shareCoursePng } = await import('./share-course.js?v=5fa3b3f22732');
     await shareCoursePng({
       element: document.querySelector('#course-document'),
       button: shareButton,
