@@ -1,6 +1,7 @@
-import { course } from './course-data.js?v=721234b3ca6f';
+import { course } from './course-data.js?v=0745a8c07163';
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const formatText = value => escapeHtml(value).replace(/\n/g, '<br>');
 const total = course.groups.reduce((count, group) => count + group.units.length, 0);
 document.querySelector('#curriculum-count').textContent = `${course.groups.length} 个模块 / ${total} 节课程`;
 document.querySelector('#course-sections').innerHTML = course.groups.map((group, index) => `
@@ -10,7 +11,7 @@ document.querySelector('#course-sections').innerHTML = course.groups.map((group,
     <div class="units">${group.units.map((unit, lessonIndex) => `
       <article class="course-unit" data-source-number="${escapeHtml(unit.number)}">
         <div class="unit-heading"><span class="unit-number">${String(lessonIndex + 1).padStart(2, '0')}</span><h4>${escapeHtml(unit.title)}</h4></div>
-        <div class="unit-copy"><p class="unit-plan">${escapeHtml(unit.plan)}</p><p class="unit-practice" data-export-ignore><span>实训</span>${escapeHtml(unit.practice)}</p></div>
+        <div class="unit-copy"><p class="unit-plan">${formatText(unit.plan)}</p>${unit.practice ? `<p class="unit-practice" data-export-ignore><span>实训</span>${formatText(unit.practice)}</p>` : ''}</div>
       </article>`).join('')}</div>
   </section>`).join('');
 
