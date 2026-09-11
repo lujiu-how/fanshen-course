@@ -185,13 +185,37 @@ function getDialog(dialog) {
   return state;
 }
 
+async function downloadImage(state, fileHandle) {
+  if (fileHandle) {
+    const writable = await fileHandle.createWritable();
+    try {
+      await writable.write(state.image.blob);
+      await writable.close();
+    } catch (error) {
+      try { await writable.abort(); } catch { /* Preserve the original error. */ }
+      throw error;
+    }
+    status(state.statusElement, '课程详情图片已保存。');
+    return { ok: true, mode: 'saved' };
+  }
+  const link = document.createElement('a');
+  link.href = state.url;
+  link.download = state.image.fileName;
+  link.hidden = true;
+  document.body.append(link);
+  try { link.click(); } finally { link.remove(); }
+  status(state.statusElement, '已开始下载课程详情图片，请查看浏览器下载记录。');
+  return { ok: true, mode: 'downloaded' };
+}
+
 /**
  * Share a generated PNG File, or present an image the user can long-press/save.
+ * Desktop downloads use a handle selected in the original click, or an anchor.
  * Requires the fixed dialog IDs supplied by index.html.
- * Returns { ok, mode } (shared / ready / fallback / cancelled), or { ok: false }.
+ * Returns { ok, mode } (shared / ready / fallback / cancelled / saved / downloaded), or { ok: false }.
  * Images are cached by the static course root; closing a dialog keeps its image.
  */
-export async function shareCoursePng({ element, button, statusElement, dialog } = {}) {
+export async function shareCoursePng({ element, button, statusElement, dialog, download = false, fileHandle = null } = {}) {
   let state;
   let ownsGeneration = false;
   let restore = () => {};
@@ -208,6 +232,7 @@ export async function shareCoursePng({ element, button, statusElement, dialog } 
     if (!record.value) message(state, '正在生成课程图片，请稍候…');
     const image = record.value || await record.pending;
     bindImage(state, image);
+    if (download) return await downloadImage(state, fileHandle);
     state.generating = false;
     if (!state.nativeUnsupported && canShareImage(image) && navigator.userActivation?.isActive === true) {
       return await nativeShare(state);
@@ -217,8 +242,9 @@ export async function shareCoursePng({ element, button, statusElement, dialog } 
     return { ok: true, mode: supported ? 'ready' : 'fallback' };
   } catch (error) {
     const detail = error instanceof Error ? error.message : '请稍后重试。';
-    if (state) message(state, `图片分享未完成：${detail}`);
-    else status(statusElement, `图片分享未完成：${detail}`);
+    const text = `图片${download ? '下载' : '分享'}未完成：${detail}`;
+    if (state) message(state, text);
+    else status(statusElement, text);
     return { ok: false, error };
   } finally {
     restore();

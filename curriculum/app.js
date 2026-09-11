@@ -15,16 +15,45 @@ document.querySelector('#course-sections').innerHTML = course.groups.map((group,
   </section>`).join('');
 
 const shareButton = document.querySelector('#share-button');
+let downloadPending = false;
 shareButton.addEventListener('click', async () => {
+  if (downloadPending) return;
+  downloadPending = true;
+  const wasDisabled = shareButton.disabled;
+  shareButton.disabled = true;
+  const statusElement = document.querySelector('#share-status');
+  const mobile = navigator.userAgentData?.mobile === true
+    || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let fileHandle = null;
   try {
-    const { shareCoursePng } = await import('./share-course.js?v=5fa3b3f22732');
+    statusElement.textContent = '';
+    if (!mobile && typeof window.showSaveFilePicker === 'function') {
+      // Open the picker in the original click, before imports or PNG rendering.
+      try {
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: '番申AI产品运营就业课-线上课程详情.png',
+          types: [{ description: 'PNG 图片', accept: { 'image/png': ['.png'] } }],
+        });
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        // Embedded browsers may expose the API while blocking the picker.
+        if (!['SecurityError', 'NotSupportedError'].includes(error?.name)) throw error;
+      }
+    }
+    const { shareCoursePng } = await import('./share-course.js?v=2fed100c7304');
     await shareCoursePng({
       element: document.querySelector('#course-document'),
       button: shareButton,
-      statusElement: document.querySelector('#share-status'),
+      statusElement,
       dialog: document.querySelector('#share-dialog'),
+      download: !mobile,
+      fileHandle,
     });
   } catch {
-    document.querySelector('#share-status').textContent = '分享组件暂未加载成功，请再试一次。';
+    statusElement.textContent = '图片下载暂未完成，请再试一次。';
+  } finally {
+    shareButton.disabled = wasDisabled;
+    downloadPending = false;
   }
 });
