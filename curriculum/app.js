@@ -1,4 +1,4 @@
-import { course } from './course-data.js?v=0745a8c07163';
+import { course } from './course-data.js?v=c414df72d59b';
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 function formatText(value) {
