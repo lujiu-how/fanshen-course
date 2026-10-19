@@ -1,0 +1,13 @@
+/* Career-positioning copy pass. Retains V4 artwork and mentor design. */
+.hero-promise{width:82%;margin:3.5cqw auto 5cqw;position:relative;z-index:2}
+.hero-promise p{font-size:4.6cqw;font-weight:700;line-height:1.6;color:var(--lime);letter-spacing:-.08cqw}
+.hero-promise>span{display:block;font-size:3.15cqw;line-height:1.9;color:#c3c9c4;margin-top:1.2cqw}
+.heading-ability h2{font-size:5.2cqw}
+.heading-path h2{font-size:5.25cqw}
+.heading-project h2{font-size:5.35cqw}
+.heading-rhythm h2{font-size:5.3cqw}
+.heading-rhythm .heading-capsule{font-size:3.85cqw}
+.faq-heading{padding-right:18cqw;min-height:18cqw}
+.faq-heading h2{font-size:4.8cqw;line-height:1.5}
+.enrollment-panel figcaption{max-width:61cqw;margin-inline:auto}
+@media(max-width:359px){.hero-promise p{font-size:4.55cqw}.hero-promise>span{font-size:3.2cqw}}
